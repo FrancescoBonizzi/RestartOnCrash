@@ -3,7 +3,7 @@ RestartOnCrash is **very simple** .NET Core application that restarts a given ap
 
 ![Icon](RestartOnCrash/_icon.ico)
 
-All you have to do is to configure it with `configuration.json` file:
+All you have to do is to configure it with `configuration.json` file and run the application:
 
 ```
 {
