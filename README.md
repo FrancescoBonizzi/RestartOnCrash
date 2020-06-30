@@ -1,4 +1,4 @@
-# ![Icon](RestartOnCrash/_icon.ico)  RestartOnCrash
+# ![Icon](RestartOnCrash/_icon.ico) RestartOnCrash
 RestartOnCrash is **very simple** .NET Core application that restarts a given application when not running.
 
 All you have to do is to configure it with `configuration.json` file:
@@ -17,6 +17,6 @@ All you have to do is to configure it with `configuration.json` file:
 
 ## TODO (Help is appreciated! XD)
 - [Make a simple GUI](/../../issues/1) (Maybe WPF) for `RestartOnCrash`, in order to give the user the possibility to select the target application, to configure the settings
-- [Add a tray icon for the application](/../../issues/2) and ensure that just one `RestartOnCrash` is running at time. Add a contextual menù to the tray icon to temporary stop it from restarting the application
+- [Add a tray icon for the application](/../../issues/2) and ensure that just one `RestartOnCrash` is running at time. Add a contextual menÃ¹ to the tray icon to temporary stop it from restarting the application
 - [Make `RestartOnCrash` multi-application ](/../../issues/3)
 - Any suggestions? :-)
