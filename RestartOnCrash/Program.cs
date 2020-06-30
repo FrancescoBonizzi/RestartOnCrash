@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Threading.Tasks;
 
 namespace RestartOnCrash
@@ -23,9 +22,13 @@ namespace RestartOnCrash
             {
                 var configuration = ConfigurationProvider.Get();
 
-                logger.LogInformation($"Application to monitor every " +
-                    $"{Math.Round(configuration.CheckInterval.TotalSeconds, 0)} seconds: " +
-                    $"{configuration.PathToApplicationToMonitor}");
+                logger.LogInformation(
+                    Environment.NewLine
+                    + $"Application to monitor: {configuration.PathToApplicationToMonitor}"
+                    + Environment.NewLine
+                    + $"Watching every: {Math.Round(configuration.CheckInterval.TotalSeconds, 0)} seconds"
+                    + Environment.NewLine
+                    + $"{nameof(configuration.StartApplicationOnlyAfterFirstExecution)}: {configuration.StartApplicationOnlyAfterFirstExecution}");
 
                 while (true)
                 {

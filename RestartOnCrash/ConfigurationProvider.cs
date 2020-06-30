@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Configuration;
 using System.IO;
 
 namespace RestartOnCrash
@@ -13,7 +12,7 @@ namespace RestartOnCrash
         {
             if (!File.Exists(_configurationName))
             {
-                throw new ConfigurationErrorsException($"{_configurationName} not found near this application executable");
+                throw new Exception($"{_configurationName} not found near this application executable");
             }
 
             var configurationRaw = File.ReadAllText(_configurationName);
@@ -21,13 +20,13 @@ namespace RestartOnCrash
 
             if (string.IsNullOrWhiteSpace(configuration.PathToApplicationToMonitor))
             {
-                throw new ConfigurationErrorsException($"The application to monitor path cannot be null or empty");
+                throw new Exception($"The application to monitor path cannot be null or empty");
             }
 
             configuration.PathToApplicationToMonitor = Path.GetFullPath(configuration.PathToApplicationToMonitor);
             if (!File.Exists(configuration.PathToApplicationToMonitor))
             {
-                throw new ConfigurationErrorsException($"The application at path: {configuration.PathToApplicationToMonitor} does not exists");
+                throw new Exception($"The application at path: {configuration.PathToApplicationToMonitor} does not exists");
             }
 
             return configuration;

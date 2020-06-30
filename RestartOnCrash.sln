@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30204.135
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestartOnCrash", "RestartOnCrash\RestartOnCrash.csproj", "{D8B93C93-0829-4602-BCD5-1C0D1A69DE45}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestartOnCrash", "RestartOnCrash\RestartOnCrash.csproj", "{D4A4691F-49B8-407E-8A45-F68076430E99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D8B93C93-0829-4602-BCD5-1C0D1A69DE45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D8B93C93-0829-4602-BCD5-1C0D1A69DE45}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D8B93C93-0829-4602-BCD5-1C0D1A69DE45}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D8B93C93-0829-4602-BCD5-1C0D1A69DE45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4A4691F-49B8-407E-8A45-F68076430E99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4A4691F-49B8-407E-8A45-F68076430E99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4A4691F-49B8-407E-8A45-F68076430E99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4A4691F-49B8-407E-8A45-F68076430E99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {9313A843-0646-4AF5-9DC3-99D8970DF154}
+		SolutionGuid = {27683C4C-17FE-4A55-8D18-95427C9CF4B6}
 	EndGlobalSection
 EndGlobal
