@@ -1,5 +1,5 @@
 {
-	"PathToApplicationToMonitor": "C:\\Users\\francescobo\\source\\repos\\Progetti non su GIT\\TestCrash\\TestCrash\\bin\\Debug\\TestCrash.exe",
+	"PathToApplicationToMonitor": "C:\\Program Files (x86)\\AnApplicationThatMayCrash.exe",
 	"CheckInterval": "00:00:10",
 	"StartApplicationOnlyAfterFirstExecution": true
 }
