@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace RestartOnCrash
@@ -37,7 +38,13 @@ namespace RestartOnCrash
                         if (!configuration.StartApplicationOnlyAfterFirstExecution || _hasAlreadyStartedManuallyOneTime)
                         {
                             logger.LogInformation("Process restarting...");
-                            var processInfo = new ProcessStartInfo(configuration.PathToApplicationToMonitor);
+                            var processInfo = new ProcessStartInfo(configuration.PathToApplicationToMonitor)
+                            {
+                                // This is very important as if the restarted application searches for assets 
+                                // in relative folder, it couldn't find them
+                                WorkingDirectory = Path.GetDirectoryName(configuration.PathToApplicationToMonitor)
+                            };
+
                             var process = new Process
                             {
                                 StartInfo = processInfo
