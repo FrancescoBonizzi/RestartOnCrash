@@ -14,8 +14,7 @@ namespace RestartOnCrash
                 .WriteTo.Debug()
                 .WriteTo.EventLog(
                     source: "RestartOnCrash",
-                    manageEventSource: true,
-                    outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+                    manageEventSource: true)
                 .CreateLogger();
         }
 
@@ -23,21 +22,42 @@ namespace RestartOnCrash
             => _logger.Dispose();
 
         public void LogError(Exception ex, [CallerMemberName] string caller = null)
-            => _logger.Error(ex, $"{caller}", caller);
+            => _logger.Error($"Caller: {caller}"
+                + Environment.NewLine
+                + Environment.NewLine
+                + ex.ToString());
 
         public void LogError(string error, [CallerMemberName] string caller = null)
-            => _logger.Error($"{caller}: {error}", caller, error);
+            => _logger.Error($"Caller: {caller}"
+                + Environment.NewLine
+                + Environment.NewLine
+                + error);
 
-        public void LogUnhandledError(Exception ex, [CallerMemberName] string caller = null)
-            => _logger.Fatal(ex, $"{caller}", caller);
+        public void LogError(string error, Exception ex, [CallerMemberName] string caller = null)
+            => _logger.Error($"Caller: {caller}"
+                + Environment.NewLine
+                + Environment.NewLine
+                + error
+                + Environment.NewLine
+                + Environment.NewLine
+                + ex.ToString());
 
         public void LogInformation(string message, [CallerMemberName] string caller = null)
-            => _logger.Information($"{caller}: {message}", caller, message);
+            => _logger.Information($"Caller: {caller}"
+                + Environment.NewLine
+                + Environment.NewLine
+                + message);
 
         public void LogWarning(Exception ex, [CallerMemberName] string caller = null)
-            => _logger.Warning(ex, $"{caller}", caller);
+            => _logger.Warning($"Caller: {caller}"
+                + Environment.NewLine
+                + Environment.NewLine
+                + ex.ToString());
 
-        public void LogWarning(string error, [CallerMemberName] string caller = null)
-            => _logger.Warning($"{caller}: {error}", caller, error);
+        public void LogWarning(string warning, [CallerMemberName] string caller = null)
+            => _logger.Warning($"Caller: {caller}"
+                + Environment.NewLine
+                + Environment.NewLine
+                + warning);
     }
 }
