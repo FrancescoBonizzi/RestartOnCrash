@@ -4,18 +4,23 @@ using System.IO;
 
 namespace RestartOnCrash
 {
-    public static class ConfigurationProvider
+    public class JsonFileConfigurationProvider
     {
-        private const string _configurationName = "configuration.json";
+        private string _configurationFilePath;
 
-        public static Configuration Get()
+        public JsonFileConfigurationProvider(string configurationFilePath)
         {
-            if (!File.Exists(_configurationName))
+            _configurationFilePath = configurationFilePath;
+        }
+
+        public Configuration Get()
+        {
+            if (!File.Exists(_configurationFilePath))
             {
-                throw new Exception($"{_configurationName} not found near this application executable");
+                throw new Exception($"{_configurationFilePath} not found near this application executable");
             }
 
-            var configurationRaw = File.ReadAllText(_configurationName);
+            var configurationRaw = File.ReadAllText(_configurationFilePath);
             var configuration = JsonConvert.DeserializeObject<Configuration>(configurationRaw);
 
             if (string.IsNullOrWhiteSpace(configuration.PathToApplicationToMonitor))

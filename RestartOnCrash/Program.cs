@@ -21,7 +21,8 @@ namespace RestartOnCrash
 
             try
             {
-                var configuration = ConfigurationProvider.Get();
+                var configurationProvider = new JsonFileConfigurationProvider("configuration.json");
+                var configuration = configurationProvider.Get();
 
                 logger.LogInformation(
                     Environment.NewLine
