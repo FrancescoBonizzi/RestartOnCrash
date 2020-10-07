@@ -54,6 +54,7 @@ namespace RestartOnCrash
                             if (process.Start())
                             {
                                 logger.LogInformation($"Process \"{configuration.PathToApplicationToMonitor}\" restarted succesfully!");
+                                ToastService.Notify($" \"{Path.GetFileNameWithoutExtension(configuration.PathToApplicationToMonitor)}\" is restarting...");
                             }
                             else
                             {
