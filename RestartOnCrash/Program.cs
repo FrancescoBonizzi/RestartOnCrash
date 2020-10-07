@@ -16,6 +16,7 @@ namespace RestartOnCrash
             if (ProcessUtilities.IsRestartOnCrashRunning())
             {
                 logger.LogWarning("RestartOnCrash is already running, cannot start");
+                ToastService.Notify($"RestartOnCrash is already running, cannot start");
                 return;
             }
 
@@ -54,11 +55,12 @@ namespace RestartOnCrash
                             if (process.Start())
                             {
                                 logger.LogInformation($"Process \"{configuration.PathToApplicationToMonitor}\" restarted succesfully!");
-                                ToastService.Notify($" \"{Path.GetFileNameWithoutExtension(configuration.PathToApplicationToMonitor)}\" is restarting...");
+                                ToastService.Notify($"\"{Path.GetFileNameWithoutExtension(configuration.PathToApplicationToMonitor)}\" is restarting...");
                             }
                             else
                             {
                                 logger.LogError($"Cannot restart \"{configuration.PathToApplicationToMonitor}\"!");
+                                ToastService.Notify($"Cannot restart \"{Path.GetFileNameWithoutExtension(configuration.PathToApplicationToMonitor)}\"!");
                             }
                         }
                     }

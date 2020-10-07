@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Text;
-using Windows.Foundation.Metadata;
+﻿using System.Runtime.InteropServices;
 using Windows.UI.Notifications;
 
 namespace RestartOnCrash
 {
     public static class ToastService
     {
-
         public static void Notify(string message)
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
