@@ -11,6 +11,7 @@ namespace RestartOnCrash
         public EventViewerLogger()
         {
             _logger = new LoggerConfiguration()
+                .WriteTo.Console()
                 .WriteTo.Debug()
                 .WriteTo.EventLog(
                     source: "RestartOnCrash",
