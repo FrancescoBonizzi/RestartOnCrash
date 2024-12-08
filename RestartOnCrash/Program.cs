@@ -32,41 +32,46 @@ namespace RestartOnCrash
                     + $"Watching every: {Math.Round(configuration.CheckInterval.TotalSeconds, 0)} seconds"
                     + Environment.NewLine
                     + $"{nameof(configuration.StartApplicationOnlyAfterFirstExecution)}: {configuration.StartApplicationOnlyAfterFirstExecution}");
+                string currentPath = string.Empty;
 
                 while (true)
                 {
-                    if (!ProcessUtilities.IsProcessRunning(configuration.PathToApplicationToMonitor))
+                    for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
                     {
-                        if (!configuration.StartApplicationOnlyAfterFirstExecution || _hasAlreadyStartedManuallyOneTime)
+                        currentPath = configuration.PathToApplicationToMonitor[i];
+                        if (!ProcessUtilities.IsProcessRunning(currentPath))
                         {
-                            logger.LogInformation("Process restarting...");
-                            var processInfo = new ProcessStartInfo(configuration.PathToApplicationToMonitor)
+                            if (!configuration.StartApplicationOnlyAfterFirstExecution || _hasAlreadyStartedManuallyOneTime)
                             {
-                                // This is very important as if the restarted application searches for assets 
-                                // in relative folder, it couldn't find them
-                                WorkingDirectory = Path.GetDirectoryName(configuration.PathToApplicationToMonitor)
-                            };
+                                logger.LogInformation("Process restarting...");
+                                var processInfo = new ProcessStartInfo(currentPath)
+                                {
+                                    // This is very important as if the restarted application searches for assets 
+                                    // in relative folder, it couldn't find them
+                                    WorkingDirectory = Path.GetDirectoryName(currentPath)
+                                };
 
-                            var process = new Process
-                            {
-                                StartInfo = processInfo
-                            };
+                                var process = new Process
+                                {
+                                    StartInfo = processInfo
+                                };
 
-                            if (process.Start())
-                            {
-                                logger.LogInformation($"Process \"{configuration.PathToApplicationToMonitor}\" restarted succesfully!");
-                                ToastService.Notify($"\"{Path.GetFileNameWithoutExtension(configuration.PathToApplicationToMonitor)}\" is restarting...");
-                            }
-                            else
-                            {
-                                logger.LogError($"Cannot restart \"{configuration.PathToApplicationToMonitor}\"!");
-                                ToastService.Notify($"Cannot restart \"{Path.GetFileNameWithoutExtension(configuration.PathToApplicationToMonitor)}\"!");
+                                if (process.Start())
+                                {
+                                    logger.LogInformation($"Process \"{configuration.PathToApplicationToMonitor}\" restarted succesfully!");
+                                    ToastService.Notify($"\"{Path.GetFileNameWithoutExtension(currentPath)}\" is restarting...");
+                                }
+                                else
+                                {
+                                    logger.LogError($"Cannot restart \"{configuration.PathToApplicationToMonitor}\"!");
+                                    ToastService.Notify($"Cannot restart \"{Path.GetFileNameWithoutExtension(currentPath)}\"!");
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        _hasAlreadyStartedManuallyOneTime = true;
+                        else
+                        {
+                            _hasAlreadyStartedManuallyOneTime = true;
+                        }
                     }
 
                     await Task.Delay(configuration.CheckInterval);

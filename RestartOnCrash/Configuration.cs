@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace RestartOnCrash
 {
@@ -7,7 +8,7 @@ namespace RestartOnCrash
         /// <summary>
         /// The full path to the application to monitor
         /// </summary>
-        public string PathToApplicationToMonitor { get; set; }
+        public List<string> PathToApplicationToMonitor { get; set; }
 
         /// <summary>
         /// The check interval for every operation
