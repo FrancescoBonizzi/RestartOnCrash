@@ -2,7 +2,7 @@
   <PropertyGroup>
     <GeneratedAssemblyInfoFile>assemblyinfo.cs</GeneratedAssemblyInfoFile>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ApplicationIcon>_icon.ico</ApplicationIcon>
     <Authors>Francesco Bonizzi, Ivan Polskikh</Authors>
     <Company>Francesco Bonizzi</Company>
