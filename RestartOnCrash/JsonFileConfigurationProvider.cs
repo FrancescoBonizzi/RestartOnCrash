@@ -1,6 +1,9 @@
 ﻿using Newtonsoft.Json;
+
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace RestartOnCrash
 {
@@ -16,25 +19,28 @@ namespace RestartOnCrash
         public Configuration Get()
         {
             if (!File.Exists(_configurationFilePath))
-            {
                 throw new Exception($"{_configurationFilePath} not found near this application executable");
-            }
 
             var configurationRaw = File.ReadAllText(_configurationFilePath);
             var configuration = JsonConvert.DeserializeObject<Configuration>(configurationRaw);
 
-            if (string.IsNullOrWhiteSpace(configuration.PathToApplicationToMonitor))
-            {
-                throw new Exception($"The application to monitor path cannot be null or empty");
-            }
+            if (configuration.PathToApplicationsToMonitor.Length == 0)
+                throw new Exception("No applications specified");
 
-            configuration.PathToApplicationToMonitor = Path.GetFullPath(configuration.PathToApplicationToMonitor);
-            if (!File.Exists(configuration.PathToApplicationToMonitor))
-            {
-                throw new Exception($"The application at path: {configuration.PathToApplicationToMonitor} does not exists");
-            }
+            var paths = configuration
+                .PathToApplicationsToMonitor
+                .Where(path => !string.IsNullOrWhiteSpace(path))
+                .Select(Path.GetFullPath)
+                .Where(File.Exists)
+                .ToArray();
 
-            return configuration;
+            if (configuration.PathToApplicationsToMonitor.Length == 0)
+                throw new Exception("All specified applications path were invalid");
+
+            return configuration with
+            {
+                PathToApplicationsToMonitor = paths
+            };
         }
     }
 }
