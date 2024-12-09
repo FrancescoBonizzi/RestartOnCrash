@@ -9,7 +9,7 @@ namespace RestartOnCrash
     {
         private static bool _hasAlreadyStartedManuallyOneTime = false;
 
-        async static Task Main(string[] args)
+        static async Task Main(string[] args)
         {
             var logger = new EventViewerLogger();
 
@@ -27,45 +27,42 @@ namespace RestartOnCrash
 
                 logger.LogInformation(
                     Environment.NewLine
-                    + $"Application to monitor: {configuration.PathToApplicationToMonitor}"
+                    + $"Application to monitor: {configuration.PathToApplicationsToMonitor}"
                     + Environment.NewLine
                     + $"Watching every: {Math.Round(configuration.CheckInterval.TotalSeconds, 0)} seconds"
                     + Environment.NewLine
                     + $"{nameof(configuration.StartApplicationOnlyAfterFirstExecution)}: {configuration.StartApplicationOnlyAfterFirstExecution}");
-                string currentPath = string.Empty;
 
                 while (true)
                 {
-                    for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
+                    foreach (var currentPath in configuration.PathToApplicationsToMonitor)
                     {
-                        currentPath = configuration.PathToApplicationToMonitor[i];
                         if (!ProcessUtilities.IsProcessRunning(currentPath))
                         {
-                            if (!configuration.StartApplicationOnlyAfterFirstExecution || _hasAlreadyStartedManuallyOneTime)
+                            if (configuration.StartApplicationOnlyAfterFirstExecution && !_hasAlreadyStartedManuallyOneTime) continue;
+
+                            logger.LogInformation("Process restarting...");
+                            var processInfo = new ProcessStartInfo(currentPath)
                             {
-                                logger.LogInformation("Process restarting...");
-                                var processInfo = new ProcessStartInfo(currentPath)
-                                {
-                                    // This is very important as if the restarted application searches for assets 
-                                    // in relative folder, it couldn't find them
-                                    WorkingDirectory = Path.GetDirectoryName(currentPath)
-                                };
+                                // This is very important as if the restarted application searches for assets
+                                // in relative folder, it couldn't find them
+                                WorkingDirectory = Path.GetDirectoryName(currentPath) ?? string.Empty
+                            };
 
-                                var process = new Process
-                                {
-                                    StartInfo = processInfo
-                                };
+                            var process = new Process
+                            {
+                                StartInfo = processInfo
+                            };
 
-                                if (process.Start())
-                                {
-                                    logger.LogInformation($"Process \"{configuration.PathToApplicationToMonitor}\" restarted succesfully!");
-                                    ToastService.Notify($"\"{Path.GetFileNameWithoutExtension(currentPath)}\" is restarting...");
-                                }
-                                else
-                                {
-                                    logger.LogError($"Cannot restart \"{configuration.PathToApplicationToMonitor}\"!");
-                                    ToastService.Notify($"Cannot restart \"{Path.GetFileNameWithoutExtension(currentPath)}\"!");
-                                }
+                            if (process.Start())
+                            {
+                                logger.LogInformation($"Process \"{configuration.PathToApplicationsToMonitor}\" restarted succesfully!");
+                                ToastService.Notify($"\"{Path.GetFileNameWithoutExtension(currentPath)}\" is restarting...");
+                            }
+                            else
+                            {
+                                logger.LogError($"Cannot restart \"{configuration.PathToApplicationsToMonitor}\"!");
+                                ToastService.Notify($"Cannot restart \"{Path.GetFileNameWithoutExtension(currentPath)}\"!");
                             }
                         }
                         else

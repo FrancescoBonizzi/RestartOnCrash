@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace RestartOnCrash
 {
@@ -18,36 +19,28 @@ namespace RestartOnCrash
         public Configuration Get()
         {
             if (!File.Exists(_configurationFilePath))
-            {
                 throw new Exception($"{_configurationFilePath} not found near this application executable");
-            }
 
             var configurationRaw = File.ReadAllText(_configurationFilePath);
             var configuration = JsonConvert.DeserializeObject<Configuration>(configurationRaw);
 
-            if (configuration.PathToApplicationToMonitor.Count == 0)
+            if (configuration.PathToApplicationsToMonitor.Length == 0)
+                throw new Exception("No applications specified");
+
+            var paths = configuration
+                .PathToApplicationsToMonitor
+                .Where(path => !string.IsNullOrWhiteSpace(path))
+                .Select(Path.GetFullPath)
+                .Where(File.Exists)
+                .ToArray();
+
+            if (configuration.PathToApplicationsToMonitor.Length == 0)
+                throw new Exception("All specified applications path were invalid");
+
+            return configuration with
             {
-                throw new Exception($"The application to monitor path cannot be null or empty");
-            }
-            string fullPath = string.Empty;
-            for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
-            {
-                fullPath = Path.GetFullPath(configuration.PathToApplicationToMonitor[i]);
-                if (File.Exists(fullPath))
-                {
-                    configuration.PathToApplicationToMonitor[i] = fullPath;
-                }
-                else
-                {
-                    configuration.PathToApplicationToMonitor.RemoveAt(i);
-                    i--;
-                }
-            }
-            if (!File.Exists(fullPath))
-            {
-                throw new Exception($"The application at path: {configuration.PathToApplicationToMonitor} does not exists");
-            }
-            return configuration;
+                PathToApplicationsToMonitor = paths
+            };
         }
     }
 }

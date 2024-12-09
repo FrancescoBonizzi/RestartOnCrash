@@ -7,10 +7,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aafba9db-75e7-4012-9b18-3b6129ea3327" name="Changes" comment="Remove assemblyinfo.cs and add JetBrains IDE configuration files&#10;&#10;The assemblyinfo.cs file was removed because it is no longer necessary for the project configuration. New configuration files for JetBrains IDEs were added to improve project setup and workflow consistency. The .gitignore was updated to exclude user-specific and generated files for better version control management.">
+    <list default="true" id="aafba9db-75e7-4012-9b18-3b6129ea3327" name="Changes" comment="Refactor ToastService for cross-platform compatibility&#10;&#10;Replaced Windows-specific notification code in ToastService with a console output placeholder. This change simplifies the current notification system and prepares for future implementation of a multi-platform solution. Additionally, removed unused package reference and adjusted project configuration files for improved development workflow.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RestartOnCrash/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RestartOnCrash/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RestartOnCrash/RestartOnCrash.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/RestartOnCrash.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RestartOnCrash/ToastService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/ToastService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RestartOnCrash/Configuration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/Configuration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RestartOnCrash/JsonFileConfigurationProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/JsonFileConfigurationProvider.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RestartOnCrash/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RestartOnCrash/configuration.json" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/configuration.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,11 +53,20 @@
       <option name="project" value="LOCAL" />
       <updated>1733757197955</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Refactor ToastService for cross-platform compatibility&#10;&#10;Replaced Windows-specific notification code in ToastService with a console output placeholder. This change simplifies the current notification system and prepares for future implementation of a multi-platform solution. Additionally, removed unused package reference and adjusted project configuration files for improved development workflow.">
+      <option name="closed" value="true" />
+      <created>1733758103021</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1733758103021</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Remove assemblyinfo.cs and add JetBrains IDE configuration files&#10;&#10;The assemblyinfo.cs file was removed because it is no longer necessary for the project configuration. New configuration files for JetBrains IDEs were added to improve project setup and workflow consistency. The .gitignore was updated to exclude user-specific and generated files for better version control management." />
-    <option name="LAST_COMMIT_MESSAGE" value="Remove assemblyinfo.cs and add JetBrains IDE configuration files&#10;&#10;The assemblyinfo.cs file was removed because it is no longer necessary for the project configuration. New configuration files for JetBrains IDEs were added to improve project setup and workflow consistency. The .gitignore was updated to exclude user-specific and generated files for better version control management." />
+    <MESSAGE value="Refactor ToastService for cross-platform compatibility&#10;&#10;Replaced Windows-specific notification code in ToastService with a console output placeholder. This change simplifies the current notification system and prepares for future implementation of a multi-platform solution. Additionally, removed unused package reference and adjusted project configuration files for improved development workflow." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor ToastService for cross-platform compatibility&#10;&#10;Replaced Windows-specific notification code in ToastService with a console output placeholder. This change simplifies the current notification system and prepares for future implementation of a multi-platform solution. Additionally, removed unused package reference and adjusted project configuration files for improved development workflow." />
   </component>
 </project>

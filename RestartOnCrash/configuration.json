@@ -1,5 +1,5 @@
 {
-    "PathToApplicationToMonitor": [
+    "PathToApplicationsToMonitor": [
         "C:\\Program Files (x86)\\AnApplicationThatMayCrash1.exe",
         "C:\\Program Files (x86)\\AnApplicationThatMayCrash2.exe"
     ],
