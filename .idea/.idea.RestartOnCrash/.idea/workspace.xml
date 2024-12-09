@@ -7,9 +7,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="aafba9db-75e7-4012-9b18-3b6129ea3327" name="Changes" comment="">
+    <list default="true" id="aafba9db-75e7-4012-9b18-3b6129ea3327" name="Changes" comment="Remove assemblyinfo.cs and add JetBrains IDE configuration files&#10;&#10;The assemblyinfo.cs file was removed because it is no longer necessary for the project configuration. New configuration files for JetBrains IDEs were added to improve project setup and workflow consistency. The .gitignore was updated to exclude user-specific and generated files for better version control management.">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.RestartOnCrash/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RestartOnCrash/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/RestartOnCrash/RestartOnCrash.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/RestartOnCrash.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RestartOnCrash/assemblyinfo.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/RestartOnCrash/ToastService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/ToastService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,25 +18,44 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///Users/fbonizzi/Source/RestartOnCrash/RestartOnCrash/ToastService.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/fbonizzi/Source/RestartOnCrash/RestartOnCrash/assemblyinfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///Users/fbonizzi/Source/RestartOnCrash/RestartOnCrash/assemblyinfo.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "git-widget-placeholder": "#9 on pr/9",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)"
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="Toolset" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;git-widget-placeholder&quot;: &quot;#9 on pr/9&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
+    <task id="LOCAL-00001" summary="Remove assemblyinfo.cs and add JetBrains IDE configuration files&#10;&#10;The assemblyinfo.cs file was removed because it is no longer necessary for the project configuration. New configuration files for JetBrains IDEs were added to improve project setup and workflow consistency. The .gitignore was updated to exclude user-specific and generated files for better version control management.">
+      <option name="closed" value="true" />
+      <created>1733757197955</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1733757197955</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
-    <option name="LAST_COMMIT_MESSAGE" value="" />
+    <MESSAGE value="Remove assemblyinfo.cs and add JetBrains IDE configuration files&#10;&#10;The assemblyinfo.cs file was removed because it is no longer necessary for the project configuration. New configuration files for JetBrains IDEs were added to improve project setup and workflow consistency. The .gitignore was updated to exclude user-specific and generated files for better version control management." />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove assemblyinfo.cs and add JetBrains IDE configuration files&#10;&#10;The assemblyinfo.cs file was removed because it is no longer necessary for the project configuration. New configuration files for JetBrains IDEs were added to improve project setup and workflow consistency. The .gitignore was updated to exclude user-specific and generated files for better version control management." />
   </component>
 </project>
