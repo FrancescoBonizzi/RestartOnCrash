@@ -161,6 +161,7 @@
             Controls.Add(listOfAddedPrograms);
             Controls.Add(selectFileButton);
             Controls.Add(startServiceButton);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "MainForm";
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Restart on crash";
