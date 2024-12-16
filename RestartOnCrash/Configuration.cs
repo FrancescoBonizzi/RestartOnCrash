@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace RestartOnCrash
 {
+    /// <summary>
+    /// Entity for parsing from configuration.json
+    /// </summary>
     public class Configuration
     {
         /// <summary>

@@ -12,12 +12,12 @@ using System;
 using System.Reflection;
 
 [assembly: System.Reflection.AssemblyCompanyAttribute("Francesco Bonizzi")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
-[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.1.1")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+58cb34b0357a2a412e37a84dba7a6b52ad1993f2")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.2")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e3c1a5eb7d946942c0a29a9e829946ea7c04d9c7")]
 [assembly: System.Reflection.AssemblyProductAttribute("RestartOnCrash")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RestartOnCrash")]
-[assembly: System.Reflection.AssemblyVersionAttribute("1.0.1.1")]
+[assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.2")]
 [assembly: System.Runtime.Versioning.TargetPlatformAttribute("Windows10.0.26100.0")]
 [assembly: System.Runtime.Versioning.SupportedOSPlatformAttribute("Windows10.0.26100.0")]
 
