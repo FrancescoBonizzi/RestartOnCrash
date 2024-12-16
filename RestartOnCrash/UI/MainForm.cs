@@ -1,10 +1,5 @@
-﻿using Serilog;
-using Serilog.Core;
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -153,7 +148,7 @@ namespace RestartOnCrash.UI
                     ToastService.Notify($"RestartOnCrash is already running, cannot start");
                     return;
                 }
-               
+
 
                 #region [Start Service]
                 try
@@ -194,16 +189,22 @@ namespace RestartOnCrash.UI
             configurationChanged = false;
             var configurationProvider = new JsonFileConfigurationProvider(configurationFileName);
             var configuration = await configurationProvider.GetAsync();
+            if (configuration.PathToApplicationToMonitor.Count != 0)
+            {
+                logger.LogInformation(
+                    Environment.NewLine
+                    + $"Application to monitor: {configuration.PathToApplicationToMonitor}"
+                    + Environment.NewLine
+                    + $"Watching every: {Math.Round(configuration.CheckInterval.TotalSeconds, 0)} seconds"
+                    + Environment.NewLine
+                    + $"{nameof(configuration.StartApplicationOnlyAfterFirstExecution)}: {configuration.StartApplicationOnlyAfterFirstExecution}");
 
-            logger.LogInformation(
-                Environment.NewLine
-                + $"Application to monitor: {configuration.PathToApplicationToMonitor}"
-                + Environment.NewLine
-                + $"Watching every: {Math.Round(configuration.CheckInterval.TotalSeconds, 0)} seconds"
-                + Environment.NewLine
-                + $"{nameof(configuration.StartApplicationOnlyAfterFirstExecution)}: {configuration.StartApplicationOnlyAfterFirstExecution}");
-
-            StartRestartOnCrashService(logger, configuration, cancellationToken: cancellationToken);
+                StartRestartOnCrashService(logger, configuration, cancellationToken: cancellationToken);
+            }
+            else
+            {
+                ToastService.Notify("You lis of apps if empty");
+            }
         }
 
         private void StartRestartOnCrashService(EventViewerLogger logger, Configuration configuration, CancellationToken cancellationToken, string currentPath = "")
@@ -279,8 +280,8 @@ namespace RestartOnCrash.UI
                 {
                     ToastService.Notify($"Exception when try to build string to write config file\n{ex}");
                 }
-                    Task fileWriteAsync = sw.WriteAsync(temp);
-                    sw.Close();
+                Task fileWriteAsync = sw.WriteAsync(temp);
+                sw.Close();
                 return fileWriteAsync;
             }
         }
@@ -330,7 +331,7 @@ namespace RestartOnCrash.UI
             }
         }
 
-        private void notifyIcon_MouseClick(object sender, MouseEventArgs e)
+        private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
         {
             Show();
             this.WindowState = FormWindowState.Normal;

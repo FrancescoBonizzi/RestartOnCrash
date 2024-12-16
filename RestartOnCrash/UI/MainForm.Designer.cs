@@ -109,7 +109,7 @@
             // 
             notifyIcon.Icon = (System.Drawing.Icon)resources.GetObject("notifyIcon.Icon");
             notifyIcon.Text = "Restart on crash";
-            notifyIcon.MouseClick += notifyIcon_MouseClick;
+            notifyIcon.MouseClick += NotifyIcon_MouseClick;
             // 
             // timeTextBox
             // 

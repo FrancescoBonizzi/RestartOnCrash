@@ -31,19 +31,17 @@ namespace RestartOnCrash
 
             var configuration = JsonConvert.DeserializeObject<Configuration>(configurationRaw)!;
 
-            if (configuration.PathToApplicationToMonitor.Count == 0)
+            if (configuration.PathToApplicationToMonitor.Count != 0)
             {
-                throw new Exception($"The application to monitor path cannot be null or empty");
-            }
-
-            string fullPath = string.Empty;
-            for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
-            {
-                fullPath = Path.GetFullPath(configuration.PathToApplicationToMonitor[i]);
-                if (!File.Exists(fullPath))
+                string fullPath = string.Empty;
+                for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
                 {
-                    configuration.PathToApplicationToMonitor.Remove(fullPath);
-                    i--;
+                    fullPath = Path.GetFullPath(configuration.PathToApplicationToMonitor[i]);
+                    if (!File.Exists(fullPath))
+                    {
+                        configuration.PathToApplicationToMonitor.Remove(fullPath);
+                        i--;
+                    }
                 }
             }
 
