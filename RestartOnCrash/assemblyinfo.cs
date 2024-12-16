@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Francesco Bonizzi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.2")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e3c1a5eb7d946942c0a29a9e829946ea7c04d9c7")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b91f22530e5afad84ab843d025cf29fb76baaede")]
 [assembly: System.Reflection.AssemblyProductAttribute("RestartOnCrash")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RestartOnCrash")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.2")]
