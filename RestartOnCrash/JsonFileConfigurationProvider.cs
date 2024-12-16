@@ -56,9 +56,7 @@ namespace RestartOnCrash
         public Configuration Get()
         {
             if (!File.Exists(_configurationFilePath))
-            {
                 throw new Exception($"{_configurationFilePath} not found near this application executable");
-            }
 
             var configurationRaw = File.ReadAllText(_configurationFilePath);
 
