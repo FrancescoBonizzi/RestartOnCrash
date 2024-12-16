@@ -11,7 +11,7 @@ namespace RestartOnCrash
     public class Program
     {
 
-        [STAThread]
+       [STAThread]
         static void Main(string[] args)
         {
             Application.Run(new MainForm());

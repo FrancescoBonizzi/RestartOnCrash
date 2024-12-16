@@ -1,8 +1,11 @@
 ﻿using Newtonsoft.Json;
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+
 using System.Threading.Tasks;
+
 
 namespace RestartOnCrash
 {
@@ -23,12 +26,9 @@ namespace RestartOnCrash
         async public Task<Configuration> GetAsync()
         {
             if (!File.Exists(_configurationFilePath))
-            {
                 throw new Exception($"{_configurationFilePath} not found near this application executable");
-            }
 
             var configurationRaw = (await File.ReadAllTextAsync(_configurationFilePath));
-
             var configuration = JsonConvert.DeserializeObject<Configuration>(configurationRaw)!;
 
             if (configuration.PathToApplicationToMonitor.Count != 0)
@@ -45,7 +45,10 @@ namespace RestartOnCrash
                 }
             }
 
-            return configuration;
+            return configuration with
+            {
+                PathToApplicationsToMonitor = paths
+            };
         }
 
         /// <summary>
