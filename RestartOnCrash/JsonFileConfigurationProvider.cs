@@ -61,28 +61,26 @@ namespace RestartOnCrash
             var configurationRaw = File.ReadAllText(_configurationFilePath);
 
             var configuration = JsonConvert.DeserializeObject<Configuration>(configurationRaw)!;
-
-            if (configuration.PathToApplicationToMonitor.Count == 0)
-            {
-                throw new Exception($"The application to monitor path cannot be null or empty");
-            }
-
-            string fullPath = string.Empty;
-            for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
-            {
-                fullPath = Path.GetFullPath(configuration.PathToApplicationToMonitor[i]);
-                if (File.Exists(fullPath))
+            if (configuration.PathToApplicationToMonitor != null)
+                if (configuration.PathToApplicationToMonitor.Count != 0)
                 {
-                    configuration.PathToApplicationToMonitor[i] = fullPath;
-                }
-                else
-                {
-                    //continue;
-                    configuration.PathToApplicationToMonitor.Remove(fullPath);
-                    i--;
-                }
-            }
 
+                    string fullPath = string.Empty;
+                    for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
+                    {
+                        fullPath = Path.GetFullPath(configuration.PathToApplicationToMonitor[i]);
+                        if (File.Exists(fullPath))
+                        {
+                            configuration.PathToApplicationToMonitor[i] = fullPath;
+                        }
+                        else
+                        {
+                            //continue;
+                            configuration.PathToApplicationToMonitor.Remove(fullPath);
+                            i--;
+                        }
+                    }
+                }
             return configuration;
         }
     }

@@ -32,7 +32,7 @@ namespace RestartOnCrash.UI
             public string[] PathToApplicationToMonitor { get; set; }
             public List<string> FullPathToApplicationToMonitor { get; set; } = new List<string>();
 
-            private string CheckInterval { get; set; } = "0:15:0";
+            private string CheckInterval { get; set; } = "0:20:0";
             private string StartApplicationOnlyAfterFirstExecution { get; set; } = "true";
 
 
@@ -49,7 +49,7 @@ namespace RestartOnCrash.UI
             /// 
             /// </summary>
             /// <param name="time"></param>
-            public void SetUserReCheckTimer(string time = "00:00:10")
+            public void SetUserReCheckTimer(string time = "00:00:20")
             {
                 CheckInterval = $"{time}";
             }
@@ -127,13 +127,14 @@ namespace RestartOnCrash.UI
             var configurationProvider = new JsonFileConfigurationProvider(configurationFileName);
             var configuration = configurationProvider.Get();
             listOfAddedPrograms.Items.Clear();
-            for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
-            {
-                string currentElement = configuration.PathToApplicationToMonitor[i];
-                programs.FullPathToApplicationToMonitor.Add(currentElement);
-                lastIndex = currentElement.LastIndexOf("\\") + correctionIndex;
-                listOfAddedPrograms.Items.Add(currentElement[lastIndex..]);
-            }
+            if (configuration.PathToApplicationToMonitor != null)
+                for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
+                {
+                    string currentElement = configuration.PathToApplicationToMonitor[i];
+                    programs.FullPathToApplicationToMonitor.Add(currentElement);
+                    lastIndex = currentElement.LastIndexOf("\\") + correctionIndex;
+                    listOfAddedPrograms.Items.Add(currentElement[lastIndex..]);
+                }
             restartOnCrashService = new(async () => await StartRestartOnCrashService(cancelTokenSource.Token));
         }
 
