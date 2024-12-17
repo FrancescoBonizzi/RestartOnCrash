@@ -13,8 +13,13 @@ Click "Stop service" to stop background process for checking all applications. I
 - "`Restart Period`" requires at least one digit in each place. Like "`0:0:0`";
 - "`Wait for first start`" will check application only after you tart it first;
 
-![RestartOnCrashGui](https://github.com/user-attachments/assets/ebf1a907-4398-4e1d-8ae7-91627a8352f3)
+![1](https://github.com/user-attachments/assets/84e630f3-5751-483f-9a8c-aa06d1543e53)
+
+You can hide GUI to tray, just collapse window.
+
+![2](https://github.com/user-attachments/assets/cdcf2870-41dd-4751-9d6f-46f77576eb0f)
 ```
+
 {
     "PathToApplicationsToMonitor": ["C:\\Program Files (x86)\\AnApplicationThatMayCrash.exe"],
     "CheckInterval": "00:00:10",
