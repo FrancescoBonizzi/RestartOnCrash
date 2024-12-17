@@ -7,12 +7,12 @@ namespace RestartOnCrash
     /// <summary>
     /// Entity for parsing from configuration.json
     /// </summary>
-    public class Configuration
+    public record Configuration
     {
         /// <summary>
         /// The full path to the application to monitor
         /// </summary>
-        public List<string> PathToApplicationToMonitor { get; set; }
+        public string[] PathToApplicationsToMonitor { get; set; }
 
         /// <summary>
         /// The check interval for every operation

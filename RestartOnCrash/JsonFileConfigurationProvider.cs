@@ -1,9 +1,8 @@
 ﻿using Newtonsoft.Json;
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-
+using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -31,19 +30,18 @@ namespace RestartOnCrash
             var configurationRaw = (await File.ReadAllTextAsync(_configurationFilePath));
             var configuration = JsonConvert.DeserializeObject<Configuration>(configurationRaw)!;
 
-            if (configuration.PathToApplicationToMonitor.Count != 0)
-            {
-                string fullPath = string.Empty;
-                for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
-                {
-                    fullPath = Path.GetFullPath(configuration.PathToApplicationToMonitor[i]);
-                    if (!File.Exists(fullPath))
-                    {
-                        configuration.PathToApplicationToMonitor.Remove(fullPath);
-                        i--;
-                    }
-                }
-            }
+            if (configuration.PathToApplicationsToMonitor.Length == 0)
+                throw new Exception("No applications specified");
+
+            var paths = configuration
+                .PathToApplicationsToMonitor
+                .Where(path => !string.IsNullOrWhiteSpace(path))
+                .Select(Path.GetFullPath)
+                .Where(File.Exists)
+                .ToArray();
+
+            if (configuration.PathToApplicationsToMonitor.Length == 0)
+                throw new Exception("All specified applications path were invalid");
 
             return configuration with
             {
@@ -64,22 +62,22 @@ namespace RestartOnCrash
             var configurationRaw = File.ReadAllText(_configurationFilePath);
 
             var configuration = JsonConvert.DeserializeObject<Configuration>(configurationRaw)!;
-            if (configuration.PathToApplicationToMonitor != null)
-                if (configuration.PathToApplicationToMonitor.Count != 0)
+            if (configuration.PathToApplicationsToMonitor != null)
+                if (configuration.PathToApplicationsToMonitor.Length != 0)
                 {
 
                     string fullPath = string.Empty;
-                    for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
+                    for (int i = 0; i < configuration.PathToApplicationsToMonitor.Length; i++)
                     {
-                        fullPath = Path.GetFullPath(configuration.PathToApplicationToMonitor[i]);
+                        fullPath = Path.GetFullPath(configuration.PathToApplicationsToMonitor[i]);
                         if (File.Exists(fullPath))
                         {
-                            configuration.PathToApplicationToMonitor[i] = fullPath;
+                            configuration.PathToApplicationsToMonitor[i] = fullPath;
                         }
                         else
                         {
                             //continue;
-                            configuration.PathToApplicationToMonitor.Remove(fullPath);
+                            configuration.PathToApplicationsToMonitor = configuration.PathToApplicationsToMonitor.Where(removedElement =>removedElement != fullPath).ToArray();
                             i--;
                         }
                     }

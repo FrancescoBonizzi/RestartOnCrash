@@ -127,10 +127,10 @@ namespace RestartOnCrash.UI
             var configurationProvider = new JsonFileConfigurationProvider(configurationFileName);
             var configuration = configurationProvider.Get();
             listOfAddedPrograms.Items.Clear();
-            if (configuration.PathToApplicationToMonitor != null)
-                for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
+            if (configuration.PathToApplicationsToMonitor != null)
+                for (int i = 0; i < configuration.PathToApplicationsToMonitor.Length; i++)
                 {
-                    string currentElement = configuration.PathToApplicationToMonitor[i];
+                    string currentElement = configuration.PathToApplicationsToMonitor[i];
                     programs.FullPathToApplicationToMonitor.Add(currentElement);
                     lastIndex = currentElement.LastIndexOf("\\") + correctionIndex;
                     listOfAddedPrograms.Items.Add(currentElement[lastIndex..]);
@@ -190,11 +190,11 @@ namespace RestartOnCrash.UI
             configurationChanged = false;
             var configurationProvider = new JsonFileConfigurationProvider(configurationFileName);
             var configuration = await configurationProvider.GetAsync();
-            if (configuration.PathToApplicationToMonitor.Count != 0)
+            if (configuration.PathToApplicationsToMonitor.Length != 0)
             {
                 logger.LogInformation(
                     Environment.NewLine
-                    + $"Application to monitor: {configuration.PathToApplicationToMonitor}"
+                    + $"Application to monitor: {configuration.PathToApplicationsToMonitor}"
                     + Environment.NewLine
                     + $"Watching every: {Math.Round(configuration.CheckInterval.TotalSeconds, 0)} seconds"
                     + Environment.NewLine
@@ -212,9 +212,9 @@ namespace RestartOnCrash.UI
         {
             while (!cancellationToken.IsCancellationRequested)
             {
-                for (int i = 0; i < configuration.PathToApplicationToMonitor.Count; i++)
+                for (int i = 0; i < configuration.PathToApplicationsToMonitor.Length; i++)
                 {
-                    currentPath = configuration.PathToApplicationToMonitor[i];
+                    currentPath = configuration.PathToApplicationsToMonitor[i];
                     if (!ProcessUtilities.IsProcessRunning(currentPath))
                     {
                         if (!configuration.StartApplicationOnlyAfterFirstExecution || hasAlreadyStartedManuallyOneTime)
@@ -234,12 +234,12 @@ namespace RestartOnCrash.UI
 
                             if (process.Start())
                             {
-                                logger.LogInformation($"Process \"{configuration.PathToApplicationToMonitor}\" restarted succesfully!");
+                                logger.LogInformation($"Process \"{configuration.PathToApplicationsToMonitor}\" restarted succesfully!");
                                 ToastService.Notify($"\"{Path.GetFileNameWithoutExtension(currentPath)}\" is restarting...");
                             }
                             else
                             {
-                                logger.LogError($"Cannot restart \"{configuration.PathToApplicationToMonitor}\"!");
+                                logger.LogError($"Cannot restart \"{configuration.PathToApplicationsToMonitor}\"!");
                                 ToastService.Notify($"Cannot restart \"{Path.GetFileNameWithoutExtension(currentPath)}\"!");
                             }
                         }
