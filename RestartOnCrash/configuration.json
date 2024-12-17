@@ -3,6 +3,6 @@
         "C:\\Program Files (x86)\\AnApplicationThatMayCrash1.exe",
         "C:\\Program Files (x86)\\AnApplicationThatMayCrash2.exe"
     ],
-    "CheckInterval": "00:00:10",
+    "CheckInterval": "00:00:20",
     "StartApplicationOnlyAfterFirstExecution": false
 }

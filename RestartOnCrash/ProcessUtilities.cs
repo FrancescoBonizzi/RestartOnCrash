@@ -1,22 +1,21 @@
 ﻿using System.Diagnostics;
 using System.IO;
 
-namespace RestartOnCrash
+namespace RestartOnCrash;
+
+public static class ProcessUtilities
 {
-    public static class ProcessUtilities
+    public static bool IsProcessRunning(string processPath)
     {
-        public static bool IsProcessRunning(string processPath)
-        {
-            var runningProcessByName = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(processPath));
-            return runningProcessByName.Length > 0;
-        }
+        var runningProcessByName = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(processPath));
+        return runningProcessByName.Length > 0;
+    }
 
-        public static bool IsRestartOnCrashRunning()
-        {
-            var runningProcessByName = Process.GetProcessesByName("RestartOnCrash");
+    public static bool IsRestartOnCrashRunning()
+    {
+        var runningProcessByName = Process.GetProcessesByName("RestartOnCrash");
 
-            // One it's me
-            return runningProcessByName.Length > 1;
-        }
+        // One it's me
+        return runningProcessByName.Length > 1;
     }
 }
