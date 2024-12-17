@@ -96,6 +96,8 @@
             // 
             waitBeforeRestart.AutoSize = true;
             waitBeforeRestart.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            waitBeforeRestart.Checked = true;
+            waitBeforeRestart.CheckState = System.Windows.Forms.CheckState.Checked;
             waitBeforeRestart.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             waitBeforeRestart.Location = new System.Drawing.Point(138, 186);
             waitBeforeRestart.Name = "waitBeforeRestart";
@@ -120,7 +122,7 @@
             timeTextBox.Name = "timeTextBox";
             timeTextBox.Size = new System.Drawing.Size(80, 16);
             timeTextBox.TabIndex = 6;
-            timeTextBox.Text = "000000";
+            timeTextBox.Text = "000020";
             timeTextBox.TextChanged += timeTextBox_TextChanged;
             // 
             // label1

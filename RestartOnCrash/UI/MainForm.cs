@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+
 using ThreadState = System.Threading.ThreadState;
 
 namespace RestartOnCrash.UI;
@@ -17,13 +18,13 @@ partial class MainForm : Form
     private bool _hasAlreadyStartedManuallyOneTime;
     private bool _configurationChanged;
 
-    private readonly CancellationTokenSource _cancelTokenSource = new();
+    private CancellationTokenSource _cancelTokenSource = new();
     private readonly ConfigAttributes _programs = new();
     private Thread _restartOnCrashService;
 
     public class ConfigAttributes
     {
-        public string[] PathToApplicationToMonitor { get; set; }
+        public string[] PathToApplicationsToMonitor { get; set; }
         public List<string> FullPathToApplicationToMonitor { get; set; } = [];
 
         private string CheckInterval { get; set; } = "0:20:0";
@@ -31,7 +32,14 @@ partial class MainForm : Form
 
         public void SetUserReCheckTimer(TimeOnly time)
         {
-            CheckInterval = $"{time.ToShortTimeString()}";
+
+            CheckInterval = time.ToString("HH:mm:ss");
+        }
+
+        public void SetUserReCheckTimer(TimeSpan time)
+        {
+
+            CheckInterval = TimeOnly.FromTimeSpan(time).ToString("HH:mm:ss"); ;
         }
 
         public void SetUserReCheckTimer(string time = "00:00:20")
@@ -61,18 +69,18 @@ partial class MainForm : Form
                 return;
 
             for (var i = 0; i < FullPathToApplicationToMonitor.Count; i++)
-                PathToApplicationToMonitor[i] = FullPathToApplicationToMonitor[i];
+                PathToApplicationsToMonitor[i] = FullPathToApplicationToMonitor[i];
         }
 
         public string GetApplicationPathsForConfigString()
         {
             var returnValue = string.Empty;
 
-            foreach (var t in PathToApplicationToMonitor)
+            foreach (var t in PathToApplicationsToMonitor)
                 returnValue += $"{Environment.NewLine}\"{t.Replace("\\", "\\\\")}\",";
 
             returnValue = returnValue.TrimEnd(',');
-            return $"\"PathToApplicationToMonitor\":[{returnValue}\n],";
+            return $"\"PathToApplicationsToMonitor\":[{returnValue}\n],";
         }
     }
 
@@ -103,6 +111,9 @@ partial class MainForm : Form
                 var lastIndex = currentElement.LastIndexOf('\\') + correctionIndex;
                 listOfAddedPrograms.Items.Add(currentElement[lastIndex..]);
             }
+
+        if (configuration.CheckInterval != TimeSpan.Zero)
+            timeTextBox.Text = TimeOnly.FromTimeSpan(configuration.CheckInterval).ToString("HH:mm:ss");
 
         _restartOnCrashService = new Thread(async void () =>
         {
@@ -199,8 +210,8 @@ partial class MainForm : Form
             {
                 if (!ProcessUtilities.IsProcessRunning(currentPath))
                 {
-                    if (configuration.StartApplicationOnlyAfterFirstExecution &&
-                        !_hasAlreadyStartedManuallyOneTime) continue;
+                    if (configuration.StartApplicationOnlyAfterFirstExecution && !_hasAlreadyStartedManuallyOneTime)
+                        continue;
 
                     logger.LogInformation("Process restarting...");
                     var processInfo = new ProcessStartInfo(currentPath)
@@ -250,9 +261,14 @@ partial class MainForm : Form
             configFile = Directory.GetFiles(currentFolder).First(x => x.Contains(ConfigurationFileName));
         }
 
-        _programs.PathToApplicationToMonitor = new string[listOfAddedPrograms.Items.Count];
-        _programs.SetUserAplicationPathsFromMainForm();
+        #region [Get configs from form]
 
+        _programs.PathToApplicationsToMonitor = new string[listOfAddedPrograms.Items.Count];
+        _programs.SetUserAplicationPathsFromMainForm();
+        _programs.SetUserSturtupOption(waitBeforeRestart.Checked);
+        _programs.SetUserReCheckTimer(timeTextBox.Text);
+
+        #endregion
         var temp = string.Empty;
 
         await using var sw = new StreamWriter(configFile, false);
@@ -306,6 +322,7 @@ partial class MainForm : Form
             _cancelTokenSource.Cancel();
             _restartOnCrashService.Join();
             ToastService.Notify("RestartOnCrush service stoped.");
+            _cancelTokenSource = new();
         }
         else
             ToastService.Notify("There's nothing to stop.");
@@ -345,13 +362,11 @@ partial class MainForm : Form
 
     private void waitBeforeRestart_CheckedChanged(object sender, EventArgs e)
     {
-        _programs.SetUserSturtupOption(waitBeforeRestart.Checked);
         _configurationChanged = true;
     }
 
     private void timeTextBox_TextChanged(object sender, EventArgs e)
     {
-        _programs.SetUserReCheckTimer(timeTextBox.Text);
         _configurationChanged = true;
     }
 }

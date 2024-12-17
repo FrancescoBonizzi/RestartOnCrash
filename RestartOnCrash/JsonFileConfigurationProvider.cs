@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
+
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -29,9 +29,9 @@ public class JsonFileConfigurationProvider
 
         var configurationRaw = (await File.ReadAllTextAsync(_configurationFilePath));
         var configuration = JsonConvert.DeserializeObject<Configuration>(configurationRaw)!;
-
-        if (configuration.PathToApplicationsToMonitor.Length == 0)
-            throw new Exception("No applications specified");
+        
+            if (configuration.PathToApplicationsToMonitor.Length == 0)
+                throw new Exception("No applications specified");
 
         var paths = configuration
             .PathToApplicationsToMonitor
@@ -42,7 +42,6 @@ public class JsonFileConfigurationProvider
 
         if (configuration.PathToApplicationsToMonitor.Length == 0)
             throw new Exception("All specified applications path were invalid");
-
         return configuration with
         {
             PathToApplicationsToMonitor = paths
