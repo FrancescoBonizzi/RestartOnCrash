@@ -9,10 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="aafba9db-75e7-4012-9b18-3b6129ea3327" name="Changes" comment="Refactor ToastService for cross-platform compatibility&#10;&#10;Replaced Windows-specific notification code in ToastService with a console output placeholder. This change simplifies the current notification system and prepares for future implementation of a multi-platform solution. Additionally, removed unused package reference and adjusted project configuration files for improved development workflow.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RestartOnCrash/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RestartOnCrash/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RestartOnCrash/Configuration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/Configuration.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RestartOnCrash/JsonFileConfigurationProvider.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/JsonFileConfigurationProvider.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RestartOnCrash/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RestartOnCrash/configuration.json" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/configuration.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RestartOnCrash/EventViewerLogger.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/EventViewerLogger.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RestartOnCrash/RestartOnCrash.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/RestartOnCrash.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RestartOnCrash/UI/MainForm.cs" beforeDir="false" afterPath="$PROJECT_DIR$/RestartOnCrash/UI/MainForm.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,15 +34,27 @@
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="Toolset" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;git-widget-placeholder&quot;: &quot;#9 on pr/9&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="2qL2XVibt3vjeznk7TQxs8MhzUN" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "pr/10",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
   }
-}</component>
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task id="LOCAL-00001" summary="Remove assemblyinfo.cs and add JetBrains IDE configuration files&#10;&#10;The assemblyinfo.cs file was removed because it is no longer necessary for the project configuration. New configuration files for JetBrains IDEs were added to improve project setup and workflow consistency. The .gitignore was updated to exclude user-specific and generated files for better version control management.">
       <option name="closed" value="true" />
@@ -61,8 +72,19 @@
       <option name="project" value="LOCAL" />
       <updated>1733758103021</updated>
     </task>
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="aafba9db-75e7-4012-9b18-3b6129ea3327" name="Changes" comment="Refactor ToastService for cross-platform compatibility&#10;&#10;Replaced Windows-specific notification code in ToastService with a console output placeholder. This change simplifies the current notification system and prepares for future implementation of a multi-platform solution. Additionally, removed unused package reference and adjusted project configuration files for improved development workflow." />
+      <created>1734427574664</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1734427574664</updated>
+      <workItem from="1734427575816" duration="638000" />
+    </task>
     <option name="localTasksCounter" value="3" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Remove assemblyinfo.cs and add JetBrains IDE configuration files&#10;&#10;The assemblyinfo.cs file was removed because it is no longer necessary for the project configuration. New configuration files for JetBrains IDEs were added to improve project setup and workflow consistency. The .gitignore was updated to exclude user-specific and generated files for better version control management." />

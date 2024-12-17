@@ -15,7 +15,6 @@
     <PublishTrimmed>False</PublishTrimmed>
     <NoWin32Manifest>true</NoWin32Manifest>
     <Platforms>AnyCPU;x64</Platforms>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
     <BaseOutputPath>..\Release\</BaseOutputPath>
     <ProduceReferenceAssembly>False</ProduceReferenceAssembly>

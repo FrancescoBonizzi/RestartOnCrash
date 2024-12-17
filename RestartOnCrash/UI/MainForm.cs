@@ -6,363 +6,352 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
 using ThreadState = System.Threading.ThreadState;
 
-namespace RestartOnCrash.UI
+namespace RestartOnCrash.UI;
+
+partial class MainForm : Form
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    partial class MainForm : Form
+    private const short NotSelectedElementIndex = -1;
+    private const string ConfigurationFileName = "configuration.json";
+    private bool _hasAlreadyStartedManuallyOneTime;
+    private bool _configurationChanged;
+
+    private readonly CancellationTokenSource _cancelTokenSource = new();
+    private readonly ConfigAttributes _programs = new();
+    private Thread _restartOnCrashService;
+
+    public class ConfigAttributes
     {
-        const Int16 notSelectedElementIndex = -1;
-        const string configurationFileName = "configuration.json";
-        bool hasAlreadyStartedManuallyOneTime = false;
-        ConfigAttributes programs = new ConfigAttributes() { };
-        bool configurationChanged = false;
-        CancellationTokenSource cancelTokenSource = new();
-        Thread restartOnCrashService = null;
+        public string[] PathToApplicationToMonitor { get; set; }
+        public List<string> FullPathToApplicationToMonitor { get; set; } = [];
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public class ConfigAttributes
+        private string CheckInterval { get; set; } = "0:20:0";
+        private string StartApplicationOnlyAfterFirstExecution { get; set; } = "true";
+
+        public void SetUserReCheckTimer(TimeOnly time)
         {
-            public string[] PathToApplicationToMonitor { get; set; }
-            public List<string> FullPathToApplicationToMonitor { get; set; } = new List<string>();
-
-            private string CheckInterval { get; set; } = "0:20:0";
-            private string StartApplicationOnlyAfterFirstExecution { get; set; } = "true";
-
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="time"></param>
-            public void SetUserReCheckTimer(TimeOnly time)
-            {
-                CheckInterval = $"{time.ToShortTimeString()}";
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="time"></param>
-            public void SetUserReCheckTimer(string time = "00:00:20")
-            {
-                CheckInterval = $"{time}";
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <returns></returns>
-            public string GetUserReCheckTimer()
-            {
-                return $"\"CheckInterval\":\"{CheckInterval}\",";
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="value"></param>
-            public void SetUserSturtupOption(bool value)
-            {
-                StartApplicationOnlyAfterFirstExecution = $"{value}";
-            }
-
-            /// <summary>
-            ///
-            /// </summary>
-            /// <returns></returns>
-            public string GetUserSturtupOption()
-            {
-                string value = StartApplicationOnlyAfterFirstExecution.ToLower();
-                return $"\"StartApplicationOnlyAfterFirstExecution\":{value}";
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="allPaths"></param>
-            public void SetUserAplicationPathsFromMainForm()
-            {
-                if (!(FullPathToApplicationToMonitor == null || FullPathToApplicationToMonitor.Count == 0))
-                    for (int i = 0; i < FullPathToApplicationToMonitor.Count; i++)
-                        PathToApplicationToMonitor[i] = FullPathToApplicationToMonitor[i];
-            }
-
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <returns></returns>
-            public string GetApplicationPathsForConfigString()
-            {
-                string returnValue = string.Empty;
-                for (int i = 0; i < PathToApplicationToMonitor.Length; i++)
-                    returnValue += $"{Environment.NewLine}\"{PathToApplicationToMonitor[i].Replace("\\", "\\\\")}\",";
-                returnValue = returnValue.TrimEnd(',');
-                return $"\"PathToApplicationToMonitor\":[{returnValue}\n],";
-            }
-        }
-        private string _filePath = string.Empty;
-        private string _fileName = string.Empty;
-
-        public MainForm()
-        {
-            InitializeComponent();
-
-            const byte correctionIndex = 1;
-            int lastIndex = 0;
-
-            selectProgramToCheck.Filter = "|*.exe";
-            selectProgramToCheck.DefaultExt = "exe";
-            selectProgramToCheck.Title = "Select program to add in List";
-            toolTipCheckbox.SetToolTip(
-                this.waitBeforeRestart,
-                "If true, the monitored application gets started only if it is already started a first time by its own.\n" +
-                "It is useful when you have an application in \"startup\".");
-
-            var configurationProvider = new JsonFileConfigurationProvider(configurationFileName);
-            var configuration = configurationProvider.Get();
-            listOfAddedPrograms.Items.Clear();
-            if (configuration.PathToApplicationsToMonitor != null)
-                for (int i = 0; i < configuration.PathToApplicationsToMonitor.Length; i++)
-                {
-                    string currentElement = configuration.PathToApplicationsToMonitor[i];
-                    programs.FullPathToApplicationToMonitor.Add(currentElement);
-                    lastIndex = currentElement.LastIndexOf("\\") + correctionIndex;
-                    listOfAddedPrograms.Items.Add(currentElement[lastIndex..]);
-                }
-            restartOnCrashService = new(async () => await StartRestartOnCrashService(cancelTokenSource.Token));
+            CheckInterval = $"{time.ToShortTimeString()}";
         }
 
-        private async void startServiceButton_Click(object sender, EventArgs e)
+        public void SetUserReCheckTimer(string time = "00:00:20")
         {
-            using (var logger = new EventViewerLogger())
-            {
-                if (ProcessUtilities.IsRestartOnCrashRunning())
-                {
-
-                    logger.LogWarning("RestartOnCrash is already running, cannot start");
-                    ToastService.Notify($"RestartOnCrash is already running, cannot start");
-                    return;
-                }
-
-
-                #region [Start Service]
-                try
-                {
-                    if (restartOnCrashService.ThreadState != ThreadState.Unstarted)
-                        StopServiceThread_Click(null, null);
-                    StartChecherThread();
-                }
-                catch (Exception ex)
-                {
-                    ToastService.Notify($"You have exception: {ex}");
-                    logger.LogError(ex);
-                    // To avoid EventViewer polluting
-                    Environment.Exit(-1);
-                }
-                #endregion
-            }
+            CheckInterval = $"{time}";
         }
 
-        private void StartChecherThread()
+        public string GetUserReCheckTimer()
         {
-            restartOnCrashService = new(async () => await StartRestartOnCrashService(cancelTokenSource.Token));
-            restartOnCrashService.Start();
+            return $"\"CheckInterval\":\"{CheckInterval}\",";
         }
 
-        async Task StartRestartOnCrashService(CancellationToken cancellationToken)
+        public void SetUserSturtupOption(bool value)
         {
-            var logger = new EventViewerLogger();
-
-            #region [RewriteConfigIfChanged]
-            if (configurationChanged)
-            {
-                var writeConfigsToFileAsync = WriteConfigsToFileAsync();
-                await writeConfigsToFileAsync;
-            }
-            #endregion
-
-            configurationChanged = false;
-            var configurationProvider = new JsonFileConfigurationProvider(configurationFileName);
-            var configuration = await configurationProvider.GetAsync();
-            if (configuration.PathToApplicationsToMonitor.Length != 0)
-            {
-                logger.LogInformation(
-                    Environment.NewLine
-                    + $"Application to monitor: {configuration.PathToApplicationsToMonitor}"
-                    + Environment.NewLine
-                    + $"Watching every: {Math.Round(configuration.CheckInterval.TotalSeconds, 0)} seconds"
-                    + Environment.NewLine
-                    + $"{nameof(configuration.StartApplicationOnlyAfterFirstExecution)}: {configuration.StartApplicationOnlyAfterFirstExecution}");
-
-                StartRestartOnCrashService(logger, configuration, cancellationToken: cancellationToken);
-            }
-            else
-            {
-                ToastService.Notify("You lis of apps if empty");
-            }
+            StartApplicationOnlyAfterFirstExecution = $"{value}";
         }
 
-        private void StartRestartOnCrashService(EventViewerLogger logger, Configuration configuration, CancellationToken cancellationToken, string currentPath = "")
+        public string GetUserSturtupOption()
         {
-            while (!cancellationToken.IsCancellationRequested)
+            string value = StartApplicationOnlyAfterFirstExecution.ToLower();
+            return $"\"StartApplicationOnlyAfterFirstExecution\":{value}";
+        }
+
+        public void SetUserAplicationPathsFromMainForm()
+        {
+            if (FullPathToApplicationToMonitor == null || FullPathToApplicationToMonitor.Count == 0)
+                return;
+
+            for (var i = 0; i < FullPathToApplicationToMonitor.Count; i++)
+                PathToApplicationToMonitor[i] = FullPathToApplicationToMonitor[i];
+        }
+
+        public string GetApplicationPathsForConfigString()
+        {
+            var returnValue = string.Empty;
+
+            foreach (var t in PathToApplicationToMonitor)
+                returnValue += $"{Environment.NewLine}\"{t.Replace("\\", "\\\\")}\",";
+
+            returnValue = returnValue.TrimEnd(',');
+            return $"\"PathToApplicationToMonitor\":[{returnValue}\n],";
+        }
+    }
+
+    private string _filePath = string.Empty;
+    private string _fileName = string.Empty;
+
+    public MainForm()
+    {
+        InitializeComponent();
+
+        const byte correctionIndex = 1;
+
+        selectProgramToCheck.Filter = "|*.exe";
+        selectProgramToCheck.DefaultExt = "exe";
+        selectProgramToCheck.Title = "Select program to add in List";
+        toolTipCheckbox.SetToolTip(
+            this.waitBeforeRestart,
+            "If true, the monitored application gets started only if it is already started a first time by its own.\n" +
+            "It is useful when you have an application in \"startup\".");
+
+        var configurationProvider = new JsonFileConfigurationProvider(ConfigurationFileName);
+        var configuration = configurationProvider.Get();
+        listOfAddedPrograms.Items.Clear();
+        if (configuration.PathToApplicationsToMonitor != null)
+            foreach (var currentElement in configuration.PathToApplicationsToMonitor)
             {
-                for (int i = 0; i < configuration.PathToApplicationsToMonitor.Length; i++)
+                _programs.FullPathToApplicationToMonitor.Add(currentElement);
+                var lastIndex = currentElement.LastIndexOf('\\') + correctionIndex;
+                listOfAddedPrograms.Items.Add(currentElement[lastIndex..]);
+            }
+
+        _restartOnCrashService = new Thread(async void () =>
+        {
+            try
+            {
+                await StartRestartOnCrashService(_cancelTokenSource.Token);
+            }
+            catch (Exception ex)
+            {
+                using var logger = new EventViewerLogger();
+                logger.LogError(ex);
+            }
+        });
+    }
+
+    private void startServiceButton_Click(object sender, EventArgs e)
+    {
+        using var logger = new EventViewerLogger();
+
+        if (ProcessUtilities.IsRestartOnCrashRunning())
+        {
+            logger.LogWarning("RestartOnCrash is already running, cannot start");
+            ToastService.Notify($"RestartOnCrash is already running, cannot start");
+            return;
+        }
+
+        #region [Start Service]
+
+        try
+        {
+            if (_restartOnCrashService.ThreadState != ThreadState.Unstarted)
+                StopServiceThread_Click(null, null);
+            StartChecherThread();
+        }
+        catch (Exception ex)
+        {
+            ToastService.Notify($"You have exception: {ex}");
+            logger.LogError(ex);
+
+            // To avoid EventViewer polluting
+            Environment.Exit(-1);
+        }
+
+        #endregion
+    }
+
+    private void StartChecherThread()
+    {
+        _restartOnCrashService = new(async () => await StartRestartOnCrashService(_cancelTokenSource.Token));
+        _restartOnCrashService.Start();
+    }
+
+    private async Task StartRestartOnCrashService(CancellationToken cancellationToken)
+    {
+        var logger = new EventViewerLogger();
+
+        #region [RewriteConfigIfChanged]
+
+        if (_configurationChanged)
+        {
+            var writeConfigsToFileAsync = WriteConfigsToFileAsync();
+            await writeConfigsToFileAsync;
+        }
+
+        #endregion
+
+        _configurationChanged = false;
+        var configurationProvider = new JsonFileConfigurationProvider(ConfigurationFileName);
+        var configuration = await configurationProvider.GetAsync();
+        if (configuration.PathToApplicationsToMonitor.Length != 0)
+        {
+            logger.LogInformation(
+                Environment.NewLine
+                + $"Application to monitor: {configuration.PathToApplicationsToMonitor}"
+                + Environment.NewLine
+                + $"Watching every: {Math.Round(configuration.CheckInterval.TotalSeconds, 0)} seconds"
+                + Environment.NewLine
+                + $"{nameof(configuration.StartApplicationOnlyAfterFirstExecution)}: {configuration.StartApplicationOnlyAfterFirstExecution}");
+
+            StartRestartOnCrashService(logger, configuration, cancellationToken: cancellationToken);
+        }
+        else
+        {
+            ToastService.Notify("You lis of apps if empty");
+        }
+    }
+
+    private void StartRestartOnCrashService(EventViewerLogger logger, Configuration configuration,
+        CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            foreach (var currentPath in configuration.PathToApplicationsToMonitor)
+            {
+                if (!ProcessUtilities.IsProcessRunning(currentPath))
                 {
-                    currentPath = configuration.PathToApplicationsToMonitor[i];
-                    if (!ProcessUtilities.IsProcessRunning(currentPath))
+                    if (configuration.StartApplicationOnlyAfterFirstExecution &&
+                        !_hasAlreadyStartedManuallyOneTime) continue;
+
+                    logger.LogInformation("Process restarting...");
+                    var processInfo = new ProcessStartInfo(currentPath)
                     {
-                        if (!configuration.StartApplicationOnlyAfterFirstExecution || hasAlreadyStartedManuallyOneTime)
-                        {
-                            logger.LogInformation("Process restarting...");
-                            var processInfo = new ProcessStartInfo(currentPath)
-                            {
-                                // This is very important as if the restarted application searches for assets 
-                                // in relative folder, it couldn't find them
-                                WorkingDirectory = Path.GetDirectoryName(currentPath)
-                            };
+                        // This is very important as if the restarted application searches for assets
+                        // in relative folder, it couldn't find them
+                        WorkingDirectory = Path.GetDirectoryName(currentPath)
+                    };
 
-                            var process = new Process
-                            {
-                                StartInfo = processInfo
-                            };
+                    var process = new Process
+                    {
+                        StartInfo = processInfo
+                    };
 
-                            if (process.Start())
-                            {
-                                logger.LogInformation($"Process \"{configuration.PathToApplicationsToMonitor}\" restarted succesfully!");
-                                ToastService.Notify($"\"{Path.GetFileNameWithoutExtension(currentPath)}\" is restarting...");
-                            }
-                            else
-                            {
-                                logger.LogError($"Cannot restart \"{configuration.PathToApplicationsToMonitor}\"!");
-                                ToastService.Notify($"Cannot restart \"{Path.GetFileNameWithoutExtension(currentPath)}\"!");
-                            }
-                        }
+                    if (process.Start())
+                    {
+                        logger.LogInformation(
+                            $"Process \"{configuration.PathToApplicationsToMonitor}\" restarted succesfully!");
+                        ToastService.Notify(
+                            $"\"{Path.GetFileNameWithoutExtension(currentPath)}\" is restarting...");
                     }
                     else
                     {
-                        hasAlreadyStartedManuallyOneTime = true;
+                        logger.LogError($"Cannot restart \"{configuration.PathToApplicationsToMonitor}\"!");
+                        ToastService.Notify(
+                            $"Cannot restart \"{Path.GetFileNameWithoutExtension(currentPath)}\"!");
                     }
-                }
-
-                Thread.Sleep(configuration.CheckInterval);
-            }
-        }
-
-        async Task<Task> WriteConfigsToFileAsync()
-        {
-            string currentFolder = Directory.GetCurrentDirectory();
-            var configFile = Directory.GetFiles(currentFolder).First(x => x.Contains(configurationFileName));
-            if (configFile == null)
-                File.Create(currentFolder + configurationFileName);
-
-            programs.PathToApplicationToMonitor = new string[listOfAddedPrograms.Items.Count];
-            programs.SetUserAplicationPathsFromMainForm();
-            //using (FileStream fs = File.OpenWrite(configFile))
-
-            string temp = string.Empty;
-            using (StreamWriter sw = new StreamWriter(configFile, false))
-            {
-                try
-                {
-                    await sw.WriteAsync("");
-                    temp = '{' +
-                    Environment.NewLine + programs.GetApplicationPathsForConfigString() +
-                    Environment.NewLine + programs.GetUserReCheckTimer() +
-                    Environment.NewLine + programs.GetUserSturtupOption() +
-                    Environment.NewLine + '}';
-                }
-                catch (Exception ex)
-                {
-                    ToastService.Notify($"Exception when try to build string to write config file\n{ex}");
-                }
-                Task fileWriteAsync = sw.WriteAsync(temp);
-                sw.Close();
-                return fileWriteAsync;
-            }
-        }
-
-        private void selectFileButton_Click(object sender, EventArgs e)
-        {
-            if (selectProgramToCheck.ShowDialog() == DialogResult.OK)
-            {
-                _filePath = selectProgramToCheck.FileName;
-
-                _fileName = selectProgramToCheck.SafeFileName;
-                if (listOfAddedPrograms.Items.Contains(_fileName))
-                {
-                    ToastService.Notify($"{_fileName} already added");
                 }
                 else
                 {
-                    listOfAddedPrograms.Items.Add(_fileName);
-                    programs.FullPathToApplicationToMonitor.Add(_filePath);
-                    ToastService.Notify($"{_fileName} added");
-                }
-
-                configurationChanged = true;
-            }
-        }
-
-        private void StopServiceThread_Click(object sender, EventArgs e)
-        {
-
-            if (restartOnCrashService.ThreadState != ThreadState.Unstarted)
-            {
-                cancelTokenSource.Cancel();
-                restartOnCrashService.Join();
-                ToastService.Notify("RestartOnCrush service stoped.");
-            }
-            else
-                ToastService.Notify("There's nothing to stop.");
-        }
-
-
-        private void MainForm_Resize(object sender, EventArgs e)
-        {
-            if (this.WindowState == FormWindowState.Minimized)
-            {
-                Hide();
-                notifyIcon.Visible = true;
-            }
-        }
-
-        private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
-        {
-            Show();
-            this.WindowState = FormWindowState.Normal;
-            notifyIcon.Visible = false;
-        }
-
-        private void removeFileButton_Click(object sender, EventArgs e)
-        {
-            if (listOfAddedPrograms.Items.Count > 0)
-            {
-                int removedElement = listOfAddedPrograms.SelectedIndex;
-                if (removedElement != notSelectedElementIndex)
-                {
-                    listOfAddedPrograms.Items.RemoveAt(removedElement);
-                    programs.FullPathToApplicationToMonitor.RemoveAt(removedElement);
+                    _hasAlreadyStartedManuallyOneTime = true;
                 }
             }
-            configurationChanged = true;
+
+            Thread.Sleep(configuration.CheckInterval);
+        }
+    }
+
+    private async Task<Task> WriteConfigsToFileAsync()
+    {
+        var currentFolder = Directory.GetCurrentDirectory();
+        var configFile = Directory.GetFiles(currentFolder).First(x => x.Contains(ConfigurationFileName));
+
+        if (string.IsNullOrWhiteSpace(configFile))
+        {
+            File.Create(currentFolder + ConfigurationFileName);
+            configFile = Directory.GetFiles(currentFolder).First(x => x.Contains(ConfigurationFileName));
         }
 
-        private void waitBeforeRestart_CheckedChanged(object sender, EventArgs e)
+        _programs.PathToApplicationToMonitor = new string[listOfAddedPrograms.Items.Count];
+        _programs.SetUserAplicationPathsFromMainForm();
+
+        var temp = string.Empty;
+
+        await using var sw = new StreamWriter(configFile, false);
+
+        try
         {
-            programs.SetUserSturtupOption(waitBeforeRestart.Checked);
-            configurationChanged = true;
+            await sw.WriteAsync("");
+            temp = '{' +
+                   Environment.NewLine + _programs.GetApplicationPathsForConfigString() +
+                   Environment.NewLine + _programs.GetUserReCheckTimer() +
+                   Environment.NewLine + _programs.GetUserSturtupOption() +
+                   Environment.NewLine + '}';
+        }
+        catch (Exception ex)
+        {
+            ToastService.Notify($"Exception when try to build string to write config file\n{ex}");
         }
 
-        private void timeTextBox_TextChanged(object sender, EventArgs e)
+        var fileWriteAsync = sw.WriteAsync(temp);
+        sw.Close();
+
+        return fileWriteAsync;
+    }
+
+    private void selectFileButton_Click(object sender, EventArgs e)
+    {
+        if (selectProgramToCheck.ShowDialog() != DialogResult.OK)
+            return;
+
+        _filePath = selectProgramToCheck.FileName;
+
+        _fileName = selectProgramToCheck.SafeFileName;
+        if (listOfAddedPrograms.Items.Contains(_fileName))
         {
-            programs.SetUserReCheckTimer(timeTextBox.Text);
-            configurationChanged = true;
+            ToastService.Notify($"{_fileName} already added");
         }
+        else
+        {
+            listOfAddedPrograms.Items.Add(_fileName);
+            _programs.FullPathToApplicationToMonitor.Add(_filePath);
+            ToastService.Notify($"{_fileName} added");
+        }
+
+        _configurationChanged = true;
+    }
+
+    private void StopServiceThread_Click(object sender, EventArgs e)
+    {
+        if (_restartOnCrashService.ThreadState != ThreadState.Unstarted)
+        {
+            _cancelTokenSource.Cancel();
+            _restartOnCrashService.Join();
+            ToastService.Notify("RestartOnCrush service stoped.");
+        }
+        else
+            ToastService.Notify("There's nothing to stop.");
+    }
+
+
+    private void MainForm_Resize(object sender, EventArgs e)
+    {
+        if (WindowState != FormWindowState.Minimized)
+            return;
+
+        Hide();
+        notifyIcon.Visible = true;
+    }
+
+    private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
+    {
+        Show();
+        WindowState = FormWindowState.Normal;
+        notifyIcon.Visible = false;
+    }
+
+    private void removeFileButton_Click(object sender, EventArgs e)
+    {
+        if (listOfAddedPrograms.Items.Count > 0)
+        {
+            var removedElement = listOfAddedPrograms.SelectedIndex;
+            if (removedElement != NotSelectedElementIndex)
+            {
+                listOfAddedPrograms.Items.RemoveAt(removedElement);
+                _programs.FullPathToApplicationToMonitor.RemoveAt(removedElement);
+            }
+        }
+
+        _configurationChanged = true;
+    }
+
+    private void waitBeforeRestart_CheckedChanged(object sender, EventArgs e)
+    {
+        _programs.SetUserSturtupOption(waitBeforeRestart.Checked);
+        _configurationChanged = true;
+    }
+
+    private void timeTextBox_TextChanged(object sender, EventArgs e)
+    {
+        _programs.SetUserReCheckTimer(timeTextBox.Text);
+        _configurationChanged = true;
     }
 }
